@@ -122,3 +122,97 @@ void affiche(PTRCELLULE tete){
     affiche(tete->suiv);
   }
 }
+
+/*---------------------------------------------------------------------------*/
+/*          Insert l'élément dans la liste chainée de manière triée          */
+/*      dans l'ordre croissant des valeurs des cellules (Récursivement)      */
+/*---------------------------------------------------------------------------*/
+
+PTRCELLULE insertionTrieeREC(PTRCELLULE tete, PTRCELLULE element){
+  if(!tete){
+    element->suiv = NULL;
+    return element;
+  }
+  if(tete->val >= element->val){
+    element->suiv = tete;
+    return element;
+  }
+  tete->suiv = insertionTrieeREC(tete->suiv, element);
+  return tete;
+}
+
+/*---------------------------------------------------------------------------*/
+/*          Tri la liste pointée par tete avec l'algorithme du tri           */
+/*                      par insertion (Récursivement)                        */
+/*---------------------------------------------------------------------------*/
+
+PTRCELLULE triInsertionREC(PTRCELLULE tete){
+  PTRCELLULE res;
+  if(!tete){
+    return NULL;
+  }
+  if(!tete->suiv)
+    return tete;
+
+  res = triInsertionREC(tete->suiv);
+  res = insertionTrieeREC(res, tete);
+  return res;
+}
+
+/*---------------------------------------------------------------------------*/
+/*          Retourne l'adresse de la cellule de la liste pointée par         */
+/*                   tete ayant la valeur la plus élevée                     */
+/*---------------------------------------------------------------------------*/
+
+PTRCELLULE rechercheMax(PTRCELLULE tete){
+  PTRCELLULE aux;
+  if(!tete)
+    return NULL;
+  if(!tete->suiv)
+    return tete;
+  aux = rechercheMax(tete->suiv);
+  if(aux->val > tete->val)
+    return aux;
+  else
+    return tete;
+}
+
+/*---------------------------------------------------------------------------*/
+/*          Supprime l'élément passé en paramètre de la liste pointée        */
+/*                      par le pointeur d'adresse adrTete                    */
+/*---------------------------------------------------------------------------*/
+
+PTRCELLULE supprimeElement(PTRCELLULE *adrTete, PTRCELLULE element){
+  if(!(*adrTete))
+    return NULL;
+  if(*adrTete == element){
+    *adrTete = element->suiv;
+    element->suiv = NULL;
+    return element;
+  }
+  return supprimeElement(&(*adrTete)->suiv, element);
+}
+
+/*---------------------------------------------------------------------------*/
+/*          Tri la liste pointée par tete avec l'algorithme du tri           */
+/*                      par selection (Récursivement)                        */
+/*---------------------------------------------------------------------------*/
+
+PTRCELLULE triSelectionREC(PTRCELLULE tete){
+  PTRCELLULE aux;
+  PTRCELLULE max;
+  if(!tete)
+    return NULL;
+  if(!tete->suiv)
+    return tete;
+
+  max = rechercheMax(tete);
+  supprimeElement(&tete, max);
+  tete = triSelectionREC(tete);
+  aux = tete;
+  while(aux->suiv){
+    aux = aux->suiv;
+  }
+  aux->suiv = max;
+  return tete;
+}
